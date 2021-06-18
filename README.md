@@ -1,0 +1,1 @@
+# fargate-smart-proxy-scaling-demo-with-custom-metrics
