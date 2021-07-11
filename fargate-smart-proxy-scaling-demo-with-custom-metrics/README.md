@@ -2,7 +2,7 @@
 
 Make sure you have Docker installed and run the following command in the `fargate-smart-proxy-scaling-demo-with-custom-metrics` folder:
 ```
-export BACKEND_URL=nlb...
+export BACKEND_URL=http://nlb...
 ./mvnw clean package
 docker build -t smart-proxy .
 ```
@@ -22,7 +22,7 @@ Simply run the following command in the `fargate-smart-proxy-scaling-demo-with-c
 After you have built the image, you can run it by executing:
 
 ```
-docker run --rm -it -p 8080:8080 smart-proxy
+docker run --rm -it -p 8080:8080 -e BACKEND_URL=http://nlb... smart-proxy
 ```
 
 You can test whether the SmartProxy running locally is healthy by executing:
@@ -35,6 +35,12 @@ or
 
 ```
 curl -i http://localhost:8080/actuator/health
+```
+
+or
+
+```
+curl -i http://localhost:8080/actuator/prometheus
 ```
 
 You can test the SmartProxy running locally by executing:
@@ -89,3 +95,15 @@ docker push ${AWS_ACCOUNT_ID}.dkr.ecr.eu-central-1.amazonaws.com/smart-proxy:lat
 ```
 
 
+# How to run the Amazon CloudWatch Agent as sidecar?
+
+https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html
+https://awsfeed.com/whats-new/management-tools/monitor-and-scale-your-amazon-ecs-on-aws-fargate-application-using-prometheus-metrics
+https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_CloudWatch_Agent.html
+
+```bash
+aws ssm put-parameter \                              
+--name "cwagentconfig" \
+--type "String" \
+--value "`cat amazon-cloudwatch-agent.json`"
+```
