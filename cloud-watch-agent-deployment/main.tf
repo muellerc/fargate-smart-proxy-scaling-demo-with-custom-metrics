@@ -22,17 +22,15 @@ resource "aws_ecs_task_definition" "smart_proxy_with_cloudwatch_agent_sidecar_ta
     family = "smart_proxy_with_cloudwatch_agent_sidecar_task_definition"
     network_mode             = "awsvpc"
     requires_compatibilities = ["FARGATE"]
-    cpu                      = 512
-    memory                   = 1024
+    cpu                      = 2048
+    memory                   = 4096
     execution_role_arn       = var.task_execution_role_arn
     task_role_arn            = var.task_role_arn
     container_definitions = jsonencode([
         {
-            name        = "nginx_container_definition"
-            image       = "nginx/nginx:latest"
+            name        = "smart_proxy_container_definition"
+            image       = "nginx:latest"
             essential   = true
-            "memory"    = 512,
-            "cpu"       = 256,
             portMappings = [{
                 containerPort = 80
             }]
@@ -42,10 +40,15 @@ resource "aws_ecs_task_definition" "smart_proxy_with_cloudwatch_agent_sidecar_ta
                     value = "tcp://127.0.0.1:25888"
                 }
             ]
+            dockerLabels = {
+                Java_EMF_Metrics             = "true"
+                ECS_PROMETHEUS_JOB_NAME      = "cwagent-ecs-file-sd-config"
+                ECS_PROMETHEUS_EXPORTER_PORT = "8080"
+            }
             logConfiguration = {
                 logDriver = "awslogs"
                 options = {
-                    awslogs-group         = "/ecs/nginx"
+                    awslogs-group         = "/ecs/smart_proxy"
                     awslogs-stream-prefix = "ecs"
                     awslogs-region        = "eu-central-1"
                 }
@@ -54,8 +57,6 @@ resource "aws_ecs_task_definition" "smart_proxy_with_cloudwatch_agent_sidecar_ta
         {
             name        = "cloudwatch_agent_container_definition"
             image       = "public.ecr.aws/cloudwatch-agent/cloudwatch-agent:latest"
-            "memory"    = 256,
-            "cpu"       = 256,
             portMappings = [{
                 containerPort = 25888
                 protocol      = "tcp"

@@ -23,6 +23,7 @@ resource "aws_ssm_parameter" "cw_agent_config" {
     value       = file("AmazonCloudWatch-CWAgentConfig.json")
 }
 
+# see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html
 resource "aws_ecs_task_definition" "cloudwatch_agent_prometheus_task_definition" {
     family = "cloudwatch_agent_prometheus_task_definition"
     network_mode             = "awsvpc"
