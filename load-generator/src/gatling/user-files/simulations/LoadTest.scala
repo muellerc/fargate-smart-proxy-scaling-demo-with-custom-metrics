@@ -22,7 +22,7 @@ class LoadTest extends Simulation {
     scn.inject(
       incrementConcurrentUsers(10)
         .times(50)
-        .eachLevelLasting(300)
+        .eachLevelLasting(180)
         .separatedByRampsLasting(60)
         .startingFrom(10)
     ).protocols(httpProtocol)
