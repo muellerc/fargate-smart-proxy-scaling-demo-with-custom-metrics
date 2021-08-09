@@ -11,6 +11,7 @@ terraform {
     }
 }
 
+# see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-ECS.html
 resource "aws_ssm_parameter" "cw_agent_prometheus_config" {
     name        = "AmazonCloudWatch-PrometheusConfig"
     type        = "String"
