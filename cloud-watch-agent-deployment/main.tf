@@ -11,6 +11,7 @@ terraform {
     }
 }
 
+# see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html
 resource "aws_ssm_parameter" "cw_agent_config" {
     name        = "AmazonCloudWatch-AgentConfig"
     type        = "String"
